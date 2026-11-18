@@ -1,0 +1,25 @@
+databases:
+  - name: flightdeck-747-db
+    plan: free
+    databaseName: flightdeck747
+    user: flightdeck747
+
+services:
+  - type: web
+    name: flightdeck-747
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app --workers 2 --threads 4 --timeout 60
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: flightdeck-747-db
+          property: connectionString
+      - key: COOKIE_SECURE
+        value: "1"
